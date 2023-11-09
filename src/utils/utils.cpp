@@ -283,6 +283,6 @@ void utils::DebugPrint(const char *string, bool post)
 {
 	if (utils::GetServerGlobals()->curtime < debugUntil)
 	{
-		META_CONPRINTF("%s%s\n", string, post ? "_pre" : "_post");
+		META_CONPRINTF("%s%s\n", string, post ? "_post" : "_pre");
 	}
 }

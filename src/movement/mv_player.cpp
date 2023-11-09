@@ -266,9 +266,12 @@ void MovementPlayer::StartZoneStartTouch()
 
 void MovementPlayer::StartZoneEndTouch()
 {
+	DEBUG_PRINT(MovementPlayer::StartZoneEndTouch);
 	this->timerStartTick = this->tickCount;
 	this->timerIsRunning = true;
+	DEBUG_PRINT(PlaySoundToClient);
 	utils::PlaySoundToClient(this->GetPlayerSlot(), MV_SND_TIMER_START);
+	DEBUG_PRINT(PlaySoundToClient);
 }
 
 // TODO: make a function like OnTimerEnd?
