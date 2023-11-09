@@ -129,21 +129,25 @@ void FASTCALL Detour_CBaseTrigger_StartTouch(CBaseTrigger *this_, CBaseEntity *p
 void FASTCALL Detour_CBaseTrigger_EndTouch(CBaseTrigger *this_, CBaseEntity *pOther)
 {
 	DEBUG_PRINT(Detour_CBaseTrigger_EndTouch);
+	META_CONPRINTF("pOther = %x\n", pOther);
 	CBaseTrigger_EndTouch(this_, pOther);
+	DEBUG_PRINT_POST(Detour_CBaseTrigger_EndTouch);
 
 	if (!pOther) return;
+	DEBUG_PRINT(IsEntityPawn);
 	if (utils::IsEntityPawn(pOther))
 	{
 		if (IsEntTriggerMultiple((CBaseEntity *)this_))
 		{
+			DEBUG_PRINT(ToPlayer);
 			MovementPlayer *player = g_pPlayerManager->ToPlayer((CBasePlayerPawn *)pOther);
 			if (IsTriggerStartZone(this_))
 			{
+				DEBUG_PRINT(StartZoneEndTouch);
 				player->StartZoneEndTouch();
 			}
 		}
 	}
-	DEBUG_PRINT_POST(Detour_CBaseTrigger_EndTouch);
 }
 
 int FASTCALL Detour_RecvServerBrowserPacket(RecvPktInfo_t &info, void* pSock)
