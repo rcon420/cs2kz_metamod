@@ -130,7 +130,8 @@ void FASTCALL Detour_CBaseTrigger_EndTouch(CBaseTrigger *this_, CBaseEntity *pOt
 {
 	DEBUG_PRINT(Detour_CBaseTrigger_EndTouch);
 	CBaseTrigger_EndTouch(this_, pOther);
-	
+
+	if (!pOther) return;
 	if (utils::IsEntityPawn(pOther))
 	{
 		if (IsEntTriggerMultiple((CBaseEntity *)this_))
