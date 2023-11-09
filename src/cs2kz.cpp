@@ -30,7 +30,7 @@ SH_DECL_HOOK4_void(ISource2GameClients, ClientPutInServer, SH_NOATTRIB, false, C
 SH_DECL_HOOK3_void(INetworkServerService, StartupServer, SH_NOATTRIB, 0, const GameSessionConfiguration_t &, ISource2WorldSession *, const char *);
 SH_DECL_HOOK2(IGameEventManager2, FireEvent, SH_NOATTRIB, false, bool, IGameEvent *, bool);
 CEntitySystem *g_pEntitySystem = NULL;
-
+extern f32 debugUntil;
 PLUGIN_EXPOSE(KZPlugin, g_KZPlugin);
 
 bool KZPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, bool late)
@@ -128,16 +128,21 @@ const char *KZPlugin::GetURL()
 
 internal float Hook_ProcessUsercmds_Pre(CPlayerSlot slot, bf_read *buf, int numcmds, bool ignore, bool paused)
 {
+	DEBUG_PRINT(Hook_ProcessUsercmds_Pre);
 	RETURN_META_VALUE(MRES_IGNORED, 0.0f);
+	DEBUG_PRINT_POST(Hook_ProcessUsercmds_Pre);
 }
 
 internal float Hook_ProcessUsercmds_Post(CPlayerSlot slot, bf_read *buf, int numcmds, bool ignore, bool paused)
 {
+	DEBUG_PRINT(Hook_ProcessUsercmds_Post);
 	RETURN_META_VALUE(MRES_IGNORED, 0.0f);
+	DEBUG_PRINT_POST(Hook_ProcessUsercmds_Post);
 }
 
 internal void Hook_CEntitySystem_Spawn_Post(int nCount, const EntitySpawnInfo_t *pInfo_DontUse)
 {
+	DEBUG_PRINT(Hook_CEntitySystem_Spawn_Post);
 	EntitySpawnInfo_t *pInfo = (EntitySpawnInfo_t *)pInfo_DontUse;
 	
 	for (i32 i = 0; i < nCount; i++)
@@ -147,10 +152,12 @@ internal void Hook_CEntitySystem_Spawn_Post(int nCount, const EntitySpawnInfo_t 
 			// do stuff with spawning entities!
 		}
 	}
+	DEBUG_PRINT_POST(Hook_CEntitySystem_Spawn_Post);
 }
 
 internal void Hook_GameFrame(bool simulating, bool bFirstTick, bool bLastTick)
 {
+	DEBUG_PRINT(Hook_GameFrame);
 	if (!g_pEntitySystem)
 	{
 		g_pEntitySystem = interfaces::pGameResourceServiceServer->GetGameEntitySystem();
@@ -158,32 +165,41 @@ internal void Hook_GameFrame(bool simulating, bool bFirstTick, bool bLastTick)
 		SH_ADD_HOOK(CEntitySystem, Spawn, g_pEntitySystem, SH_STATIC(Hook_CEntitySystem_Spawn_Post), true);
 	}
 	RETURN_META(MRES_IGNORED);
+	DEBUG_PRINT_POST(Hook_GameFrame);
 }
 
 internal void Hook_ClientCommand(CPlayerSlot slot, const CCommand& args)
 {
+	DEBUG_PRINT(Hook_ClientCommand);
 	if (META_RES result = scmd::OnClientCommand(slot, args))
 	{
 		RETURN_META(result);
 	}
 	RETURN_META(MRES_IGNORED);
+	DEBUG_PRINT_POST(Hook_ClientCommand);
 }
 
 internal void Hook_CheckTransmit(CCheckTransmitInfo **pInfo, int infoCount, CBitVec<16384> &, const Entity2Networkable_t **pNetworkables, const uint16 *pEntityIndicies, int nEntities)
 {
+	DEBUG_PRINT(Hook_CheckTransmit);
 	KZ::quiet::OnCheckTransmit(pInfo, infoCount);
 	RETURN_META(MRES_IGNORED);
+	DEBUG_PRINT_POST(Hook_CheckTransmit);
 }
 
 internal void Hook_ClientPutInServer(CPlayerSlot slot, char const *pszName, int type, uint64 xuid)
 {
+	DEBUG_PRINT(Hook_ClientPutInServer);
 	KZ::misc::OnClientPutInServer(slot);
 	RETURN_META(MRES_IGNORED);
+	DEBUG_PRINT_POST(Hook_ClientPutInServer);
 }
 
 internal void Hook_StartupServer(const GameSessionConfiguration_t &config, ISource2WorldSession *, const char *)
 {
+	DEBUG_PRINT(Hook_StartupServer);
 	interfaces::pEngine->ServerCommand("exec cs2kz.cfg");
+	DEBUG_PRINT_POST(Hook_StartupServer);
 }
 
 internal bool Hook_FireEvent(IGameEvent *event, bool bDontBroadcast)
@@ -191,6 +207,10 @@ internal bool Hook_FireEvent(IGameEvent *event, bool bDontBroadcast)
 	if (event)
 	{
 		META_CONPRINTF("%s fired!\n", event->GetName());
+		if (strcmp("player_disconnect", event->GetName()) == 0)
+		{
+			debugUntil = utils::GetServerGlobals()->curtime + 0.1f;
+		}
 	}
 	RETURN_META_VALUE(MRES_IGNORED, true);
 }

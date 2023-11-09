@@ -78,4 +78,8 @@ namespace utils
 	void CPrintChat(CBaseEntity *entity, const char *format, ...);
 	void CPrintChatAll(const char *format, ...);
 
+	void DebugPrint(const char *string, bool post = false);
 }
+
+#define DEBUG_PRINT(func) utils::DebugPrint(#func)
+#define DEBUG_PRINT_POST(func) utils::DebugPrint(#func, true)

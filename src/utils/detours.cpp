@@ -61,11 +61,13 @@ void FlushAllDetours()
 
 void Detour_Host_Say(CCSPlayerController *pEntity, const CCommand *args, bool teamonly, uint32_t nCustomModRules, const char *pszCustomModPrepend)
 {
+	DEBUG_PRINT(Detour_Host_Say);
 	META_RES mres = scmd::OnHost_Say(pEntity, *args);
 	if (mres != MRES_SUPERCEDE)
 	{
 		Host_Say(pEntity, args, teamonly, nCustomModRules, pszCustomModPrepend);
 	}
+	DEBUG_PRINT_POST(Detour_Host_Say);
 }
 
 bool IsEntTriggerMultiple(CBaseEntity *ent)
@@ -103,6 +105,7 @@ bool IsTriggerEndZone(CBaseTrigger *trigger)
 
 void FASTCALL Detour_CBaseTrigger_StartTouch(CBaseTrigger *this_, CBaseEntity *pOther)
 {
+	DEBUG_PRINT(Detour_CBaseTrigger_StartTouch);
 	CBaseTrigger_StartTouch(this_, pOther);
 	
 	if (utils::IsEntityPawn(pOther))
@@ -120,10 +123,12 @@ void FASTCALL Detour_CBaseTrigger_StartTouch(CBaseTrigger *this_, CBaseEntity *p
 			}
 		}
 	}
+	DEBUG_PRINT_POST(Detour_CBaseTrigger_StartTouch);
 }
 
 void FASTCALL Detour_CBaseTrigger_EndTouch(CBaseTrigger *this_, CBaseEntity *pOther)
 {
+	DEBUG_PRINT(Detour_CBaseTrigger_EndTouch);
 	CBaseTrigger_EndTouch(this_, pOther);
 	
 	if (utils::IsEntityPawn(pOther))
@@ -137,13 +142,16 @@ void FASTCALL Detour_CBaseTrigger_EndTouch(CBaseTrigger *this_, CBaseEntity *pOt
 			}
 		}
 	}
+	DEBUG_PRINT_POST(Detour_CBaseTrigger_EndTouch);
 }
 
 int FASTCALL Detour_RecvServerBrowserPacket(RecvPktInfo_t &info, void* pSock)
 {
+	DEBUG_PRINT(Detour_RecvServerBrowserPacket);
 	int retValue = RecvServerBrowserPacket(info, pSock);
 	// META_CONPRINTF("Detour_RecvServerBrowserPacket: Message received from %i.%i.%i.%i:%i, returning %i\nPayload: %s\n", 
 	// 	info.m_adrFrom.m_IPv4Bytes.b1, info.m_adrFrom.m_IPv4Bytes.b2, info.m_adrFrom.m_IPv4Bytes.b3, info.m_adrFrom.m_IPv4Bytes.b4, 
 	// 	info.m_adrFrom.m_usPort, retValue, (char*)info.m_pPkt);
+	DEBUG_PRINT_POST(Detour_RecvServerBrowserPacket);
 	return retValue;
 }

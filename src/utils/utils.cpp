@@ -25,6 +25,7 @@ GetLegacyGameEventListener_t *utils::GetLegacyGameEventListener = NULL;
 SnapViewAngles_t *utils::SnapViewAngles = NULL;
 EmitSoundFunc_t *utils::EmitSound = NULL;
 
+f32 debugUntil{};
 void modules::Initialize()
 {
 	modules::engine = new CModule(ROOTBIN, "engine2");
@@ -276,4 +277,12 @@ f32 utils::NormalizeDeg(f32 a)
 f32 utils::GetAngleDifference(const f32 x, const f32 y, const f32 c)
 {
 	return fmod(fabs(x - y) + c, 2 * c) - c;
+}
+
+void utils::DebugPrint(const char *string, bool post)
+{
+	if (utils::GetServerGlobals()->curtime < debugUntil)
+	{
+		META_CONPRINTF("%s%s\n", string, post ? "_pre" : "_post");
+	}
 }
